@@ -1,4 +1,4 @@
 
-![效果](https://github.com/dongxiexidu/圆形图片加载动画test/blob/master/demo.gif)
+![效果](https://github.com/dongxiexidu/swift-circleProgressLoadingAnimation/blob/master/demo.gif)
 
 
