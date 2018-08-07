@@ -21,7 +21,6 @@ class CustomImageView: UIImageView {
         addSubview(progressIndicatorView)
         progressIndicatorView.frame = bounds
         
-
         let url = URL.init(string: "https://koenig-media.raywenderlich.com/uploads/2015/02/mac-glasses.jpeg")
         
         self.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { [weak self] (reseivdSize, expectedSize) in
@@ -29,14 +28,6 @@ class CustomImageView: UIImageView {
         }) { [weak self] (image, error, _, _) in
             self?.progressIndicatorView.reveal()
         }
-        
-//        self.sd_setImage(with: url, placeholderImage: nil, options: .cacheMemoryOnly, progress: { [weak self](reseivdSize, expectedSize) -> Void in
-//            self?.progressIndicatorView.progress = CGFloat(reseivdSize) / CGFloat(expectedSize)
-//
-//            }) { [weak self](image, error, _, _) -> Void in
-//             self?.progressIndicatorView.reveal()
-//        }
-        
     }
 
 }
