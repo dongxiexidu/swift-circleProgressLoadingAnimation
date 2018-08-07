@@ -10,6 +10,9 @@ import UIKit
 
 class CircularLoaderView: UIView {
     
+    let circlePathLayer = CAShapeLayer()
+    let circleRadius : CGFloat = 20.0
+    
     var progress : CGFloat{
         get{
             return circlePathLayer.strokeEnd
@@ -26,8 +29,7 @@ class CircularLoaderView: UIView {
         }
     }
 
-    let circlePathLayer = CAShapeLayer()
-    let circleRadius : CGFloat = 20.0
+    
     
     // 两个初始化方法都调用configure方法
     override init(frame: CGRect) {
@@ -43,28 +45,29 @@ class CircularLoaderView: UIView {
     
     // 初始化代码来配置这个shape layer:
     func configure(){
-        circlePathLayer.frame = bounds;
+        circlePathLayer.frame = bounds
         circlePathLayer.lineWidth = 2.0
-        circlePathLayer.fillColor = UIColor.clearColor().CGColor
-        circlePathLayer.strokeColor = UIColor.redColor().CGColor
+        circlePathLayer.fillColor = UIColor.clear.cgColor
+        circlePathLayer.strokeColor = UIColor.red.cgColor
         layer.addSublayer(circlePathLayer)
-        backgroundColor = UIColor.whiteColor()
+        backgroundColor = .white
         progress = 0.0
     }
     
     // 小矩形的frame
     func circleFrame() -> CGRect {
-        var circleFrame = CGRect(x: 0, y: 0, width: 2*circleRadius, height: 2*circleRadius)
         
-        circleFrame.origin.x = CGRectGetMidX(circlePathLayer.bounds) - CGRectGetMidX(circleFrame)
-        circleFrame.origin.y = CGRectGetMidY(circlePathLayer.bounds) - CGRectGetMidY(circleFrame)
+        var circleFrame = CGRect(x: 0, y: 0, width: 2*circleRadius, height: 2*circleRadius)
+        let circlePathBounds = circlePathLayer.bounds
+        circleFrame.origin.x = circlePathBounds.midX - circleFrame.midX
+        circleFrame.origin.y = circlePathBounds.midY - circleFrame.midY
         return circleFrame
     }
     
     
     // 通过一个矩形（正方形）绘制椭圆（圆形）路径
     func circlePath() -> UIBezierPath {
-        return UIBezierPath(ovalInRect: circleFrame())
+        return UIBezierPath.init(ovalIn: circleFrame())
     }
     
     // 由于layer没有autoresizingMask这个属性，
@@ -73,17 +76,17 @@ class CircularLoaderView: UIView {
         super.layoutSubviews()
         
         circlePathLayer.frame = bounds
-        circlePathLayer.path = circlePath().CGPath
+        circlePathLayer.path = circlePath().cgPath
     }
     
     
     func reveal() {
         // 背景透明，那么藏着后面的imageView将显示出来
-        backgroundColor = UIColor.clearColor()
+        backgroundColor = .clear
         progress = 1.0
         
         // 移除隐式动画,否则干扰reveal animation
-        circlePathLayer.removeAnimationForKey("strokenEnd")
+        circlePathLayer.removeAnimation(forKey: "strokenEnd")
         
         // 从它的superLayer 移除circlePathLayer ,然后赋值给super的layer mask
         circlePathLayer.removeFromSuperlayer()
@@ -91,12 +94,14 @@ class CircularLoaderView: UIView {
         superview?.layer.mask = circlePathLayer
         
         // 1 求出最终形状
-        let center = CGPoint(x:CGRectGetMidX(bounds),y: CGRectGetMidY(bounds))
+        let center = CGPoint(x:bounds.midX,y: bounds.midY)
         let finalRadius = sqrt((center.x*center.x) + (center.y*center.y))
         let radiusInset = finalRadius - circleRadius
-        let outerRect = CGRectInset(circleFrame(), -radiusInset, -radiusInset)
+        
+        
+        let outerRect = circleFrame().insetBy(dx: -radiusInset, dy: -radiusInset)
         // CAShapeLayer mask最终形状
-        let toPath = UIBezierPath(ovalInRect: outerRect).CGPath
+        let toPath = UIBezierPath.init(ovalIn: outerRect).cgPath
         
         
         // 2 初始值
@@ -125,12 +130,15 @@ class CircularLoaderView: UIView {
         groupAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         groupAnimation.animations = [pathAnimation ,lineWidthAnimation]
         groupAnimation.delegate = self
-        circlePathLayer.addAnimation(groupAnimation, forKey: "strokeWidth")
+        circlePathLayer.add(groupAnimation, forKey: "strokeWidth")
     }
+
     
+}
+
+extension CircularLoaderView :CAAnimationDelegate {
     // 移除mask
-    override func animationDidStop(anim: CAAnimation, finished flag: Bool) {
-        superview?.layer.mask = nil;
+    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+        superview?.layer.mask = nil
     }
-    
 }

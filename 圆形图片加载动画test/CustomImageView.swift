@@ -7,31 +7,35 @@
 //
 
 import UIKit
+import Kingfisher
 
 class CustomImageView: UIImageView {
 
     // 创建一个实例对象
-    let progressIndicatorView = CircularLoaderView(frame: CGRectZero)
+    let progressIndicatorView = CircularLoaderView(frame: CGRect.zero)
     
+    // 从xib中加载会走这个方法
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
         addSubview(progressIndicatorView)
         progressIndicatorView.frame = bounds
         
-        // 注意写法
-        progressIndicatorView.autoresizingMask = [.FlexibleWidth , .FlexibleHeight]
+
+        let url = URL.init(string: "https://koenig-media.raywenderlich.com/uploads/2015/02/mac-glasses.jpeg")
         
-      //  progressIndicatorView.progress =
-        
-        let url = NSURL(string: "http://www.raywenderlich.com/wp-content/uploads/2015/02/mac-glasses.jpeg")
-        
-        self.sd_setImageWithURL(url, placeholderImage: nil, options: .CacheMemoryOnly, progress: { [weak self](reseivdSize, expectedSize) -> Void in
-            self!.progressIndicatorView.progress = CGFloat(reseivdSize) / CGFloat(expectedSize)
-            
-            }) { [weak self](image, error, _, _) -> Void in
-             self?.progressIndicatorView.reveal()
+        self.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { [weak self] (reseivdSize, expectedSize) in
+            self?.progressIndicatorView.progress = CGFloat(reseivdSize) / CGFloat(expectedSize)
+        }) { [weak self] (image, error, _, _) in
+            self?.progressIndicatorView.reveal()
         }
+        
+//        self.sd_setImage(with: url, placeholderImage: nil, options: .cacheMemoryOnly, progress: { [weak self](reseivdSize, expectedSize) -> Void in
+//            self?.progressIndicatorView.progress = CGFloat(reseivdSize) / CGFloat(expectedSize)
+//
+//            }) { [weak self](image, error, _, _) -> Void in
+//             self?.progressIndicatorView.reveal()
+//        }
         
     }
 
