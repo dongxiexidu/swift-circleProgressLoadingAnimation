@@ -127,7 +127,7 @@ class CircularLoaderView: UIView {
         // 5 组动画
         let groupAnimation = CAAnimationGroup()
         groupAnimation.duration = 1
-        groupAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        groupAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
         groupAnimation.animations = [pathAnimation ,lineWidthAnimation]
         groupAnimation.delegate = self
         circlePathLayer.add(groupAnimation, forKey: "strokeWidth")
